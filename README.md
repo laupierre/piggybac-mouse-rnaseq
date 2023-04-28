@@ -1,1 +1,1 @@
-# piggybac-mouse-rnaseq
+# piggybac mouse RNA-Seq
