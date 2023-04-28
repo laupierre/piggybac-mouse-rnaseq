@@ -41,7 +41,8 @@ colnames (pheno) <- c("sample", "genotype")
 row.names (pheno) <- pheno$sample <- colnames (a)
 pheno$genotype <- gsub ("_.*", "", pheno$sample)
 pheno$genotype [pheno$genotype == "PGBD5"] <- "shPGBD5" 
-pheno <- pheno[pheno$genotype != "CONTROL", ]
+# remove a pair of samples
+pheno <- pheno[!pheno$sample %in% c("PGBD5_sh8_4","shCONTROL_4"), ]
 pheno
 
 a <- a[ ,colnames (a) %in% pheno$sample]
@@ -68,7 +69,20 @@ res <- res[order (res$padj), ]
 # Sanity check
 res[res$gene_name == "Pgbd5", ] 
 
-write.xlsx (res, "piggybac_shrna_mouse_in-vitro.xlsx", rowNames=F)
+write.xlsx (res, "piggybac_shPB_vs_shCTR_mouse_in-vitro.xlsx", rowNames=F)
+
+
+
+## heatmap plot
+# Neurod1, Neurod2, Dcx, RhoA, RhoB, Rac1
+select <- c("ENSMUSG00000034701.10", "ENSMUSG00000038255.7", "ENSMUSG00000031285.15", "ENSMUSG00000007815.14", "ENSMUSG00000054364.6", "ENSMUSG00000001847.15", "ENSMUSG00000050751.16")
+
+df <- as.data.frame(colData(dds)[,c("genotype","sample")])
+
+pdf ("Heatmap plot.pdf")
+pheatmap( log2 (counts(dds,normalized=TRUE)+1) [row.names (counts(dds)) %in% select, ], cluster_rows=FALSE, show_rownames=TRUE, cluster_cols=FALSE, annotation_col=df)
+dev.off ()
+
 
 
 
