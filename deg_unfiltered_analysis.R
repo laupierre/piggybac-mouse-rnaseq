@@ -67,7 +67,7 @@ res <- res[order (res$padj), ]
 # Sanity check
 res[res$gene_name == "Pgbd5", ] 
 
-write.xlsx (res, "piggybac_mouse_in-vitro.xlsx", rowNames=F)
+write.xlsx (res, "piggybac_shrna_mouse_in-vitro.xlsx", rowNames=F)
 
 
 ## heatmap plot
