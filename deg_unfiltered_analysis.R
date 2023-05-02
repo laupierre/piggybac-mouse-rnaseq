@@ -68,6 +68,7 @@ res <- res[order (res$padj), ]
 
 # Sanity check
 res[res$gene_name == "Pgbd5", ] 
+table (res$padj < 0.05)
 
 write.xlsx (res, "piggybac_shPB_vs_shCTR_mouse_in-vitro.xlsx", rowNames=F)
 
