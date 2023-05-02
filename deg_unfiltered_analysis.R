@@ -123,8 +123,11 @@ library(RColorBrewer)
 blueColours <- brewer.pal(9, "Blues")
 colors <- colorRampPalette(rev(blueColours))(255)
 
-pheatmap(sampleDistMatrix, clustering_distance_rows = sampleDists, clustering_distance_cols = sampleDists, color = colors)
-ggsave ("Distance between samples plot.pdf")
+df <- as.data.frame(colData(dds)[,c("genotype","sample")])
+
+pdf ("Distance between samples plot.pdf")
+pheatmap(sampleDistMatrix, clustering_distance_rows = sampleDists, clustering_distance_cols = sampleDists, color = colors, annotation_row=df)
+dev.off()
 
 
 
