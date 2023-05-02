@@ -113,6 +113,17 @@ ggplot(pcaData, aes(PC1, PC2, color=genotype, label=sample)) +
 ggsave ("PCA plot.pdf")
 
 
+## Sample to sample correlation, see https://rockefelleruniversity.github.io/RU_RNAseq/presentations/singlepage/RU_RNAseq_p3.html
+
+sampleDists <- as.dist(1 - cor(log2 (counts(dds,normalized=TRUE)+1), method="pearson"))
+sampleDistMatrix <- as.matrix(sampleDists)
+
+library(RColorBrewer)
+blueColours <- brewer.pal(9, "Blues")
+colors <- colorRampPalette(rev(blueColours))(255)
+
+pheatmap(sampleDistMatrix, clustering_distance_rows = sampleDists, clustering_distance_cols = sampleDists, color = colors)
+ggsave ("Distance between samples plot.pdf")
 
 
 
