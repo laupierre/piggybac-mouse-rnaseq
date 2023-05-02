@@ -41,8 +41,8 @@ colnames (pheno) <- c("sample", "genotype")
 row.names (pheno) <- pheno$sample <- colnames (a)
 pheno$genotype <- gsub ("_.*", "", pheno$sample)
 pheno$genotype [pheno$genotype == "PGBD5"] <- "shPGBD5" 
-# remove a pair of samples
-pheno <- pheno[!pheno$sample %in% c("PGBD5_sh8_4","shCONTROL_4", "CONTROL_4"), ]
+## remove a pair of samples
+#pheno <- pheno[!pheno$sample %in% c("PGBD5_sh8_4","shCONTROL_4", "CONTROL_4"), ]
 pheno
 
 a <- a[ ,colnames (a) %in% pheno$sample]
