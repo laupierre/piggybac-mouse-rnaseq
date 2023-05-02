@@ -75,7 +75,10 @@ write.xlsx (res, "piggybac_shPB_vs_shCTR_mouse_in-vitro.xlsx", rowNames=F)
 
 ## heatmap plot
 # Neurod1, Neurod2, Dcx, RhoA, RhoB, Rac1
-select <- c("ENSMUSG00000034701.10", "ENSMUSG00000038255.7", "ENSMUSG00000031285.15", "ENSMUSG00000007815.14", "ENSMUSG00000054364.6", "ENSMUSG00000001847.15", "ENSMUSG00000050751.16")
+#select <- c("ENSMUSG00000034701.10", "ENSMUSG00000038255.7", "ENSMUSG00000031285.15", "ENSMUSG00000007815.14", "ENSMUSG00000054364.6", "ENSMUSG00000001847.15", "ENSMUSG00000050751.16")
+
+select <- c("Pgbd5", "Pax6", "Tbr2", "Hes1", "Hes5" ,"Nes", "Ccnd2", "Cdk2", "Neurod1", "Neurod2", "Neurod6", "Sox11", "Fezf2", "Ctip2", "Satb2", "Dcx", "Rnd2", "Rac1", "Rac2", "Rac3", "Rhoa", "Rhob", "Cdc42")
+select <- annot[annot$gene_name %in% select, ]$Geneid
 
 df <- as.data.frame(colData(dds)[,c("genotype","sample")])
 
