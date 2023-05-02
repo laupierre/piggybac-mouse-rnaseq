@@ -88,6 +88,14 @@ dev.off ()
 
 
 
+## heatmap plot of top 75 genes
+
+select <- res$Geneid[1:75]
+
+pdf ("Heatmap 75 top genes plot.pdf")
+pheatmap( log2 (counts(dds,normalized=TRUE)+1) [row.names (counts(dds)) %in% select, ], cluster_rows=FALSE, show_rownames=FALSE, cluster_cols=FALSE, annotation_col=df)
+dev.off ()
+
 
 ## PCA plot
 vsd <- vst(dds, blind=FALSE)
