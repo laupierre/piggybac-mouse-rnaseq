@@ -62,6 +62,8 @@ x <- DGEList(counts=a)
 isexpr <- rowSums(cpm(x) > 6) >= 3
 x <- x[isexpr, ]
 dim (x$counts)
+#  12022    12
+
 
 ## paired limma test (the paired factor is treated as a batch factor)
 
@@ -84,7 +86,6 @@ efit <- eBayes(vfit, trend=TRUE)
 res1 <- topTable(efit,coef=1,sort.by="P", n= Inf)
 res2 <- topTable(efit,coef=2,sort.by="P", n= Inf)
 
-
 res1[row.names (res1) == anno[anno$gene_name == "Pgbd5", ]$gene_id, ]
 #                          logFC  AveExpr         t      P.Value  adj.P.Val
 #ENSMUSG00000050751.16 -1.181046 6.163766 -4.949085 0.0007322531 0.01160692
@@ -92,6 +93,66 @@ res1[row.names (res1) == anno[anno$gene_name == "Pgbd5", ]$gene_id, ]
 res2[row.names (res2) == anno[anno$gene_name == "Pgbd5", ]$gene_id, ]
 #                          logFC  AveExpr         t      P.Value  adj.P.Val
 #ENSMUSG00000050751.16 -1.580888 6.163766 -7.013265 5.456355e-05 0.02951769
+
+boxplot (res1$logFC)
+abline (h=0)
+abline (h=1)
+abline (h=-1)
+
+boxplot (res2$logFC)
+abline (h=0)
+abline (h=1)
+abline (h=-1)
+
+
+colnames (res1) <- paste (colnames (res1), "shpgbvsctrl", sep=".")
+colnames (res2) <- paste (colnames (res2), "shpgbvsshctrl", sep=".")
+resall <- merge (res1, res2, by="row.names")
+colnames (resall)[1] <- "gene_id"
+res <- merge (resall, anno, by="gene_id")
+
+res[res$gene_name == "Pgbd5", ]
+
+
+## see individual paired log2 fold changes. These are not normalized values
+## Pairwise comparisons of batches 4 and 8 (these are the 2 working experiments) !!!
+## Not sure why they are not against the CONTROL originally !!!
+norm.exprs <- v$E
+#norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"shCONTROL_4"])
+#norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"shCONTROL_8"])
+#norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"shCONTROL_8"])
+
+norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"CONTROL_4"])
+norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"CONTROL_8"])
+norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"CONTROL_8"])
+
+norm.dif <- cbind (norm.dif1, norm.dif2, norm.dif3)
+
+
+norm.dif$consistent <- "No"
+norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x > 0) )] <- "Up"
+norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x < 0) )] <- "Down"
+table (norm.dif$consistent)
+#Down   No   Up 
+#3625 6231 2166 
+
+res <- merge (res, norm.dif, by.x="gene_id", by.y="row.names")
+res <- res[ ,c(1:17, 19:22, 18)]
+res <- res[order (res$adj.P.Val), ]
+
+table (res$adj.P.Val.shpgbvsctrl < 0.05)
+#FALSE  TRUE 
+# 8749  3273 
+table (res$adj.P.Val.shpgbvsshctrl < 0.05)
+#FALSE  TRUE 
+#11937    85 
+
+write.xlsx (res, "deg_unfiltered_piggybac_mouse_shRNA_limma_new_pipeline.xlsx", rowNames=F)
+
+
+
+
+
 
 
 
