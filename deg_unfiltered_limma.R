@@ -71,7 +71,7 @@ celltype <- factor (pheno$genotype)
 batch <- factor (gsub (".*_", "", gsub ("_S.*", "", colnames (x$counts)) ))
 batch <- factor (as.numeric (gsub ("\\..*", "", batch)))
 batch
-# Levels: 4 6 7 8
+# Levels: 4 7 8
 
 design <- model.matrix (~ 0 + celltype + batch) 
 colnames (design) <- gsub ("celltype", "", colnames (design))
