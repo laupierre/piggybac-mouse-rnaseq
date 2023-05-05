@@ -62,7 +62,7 @@ x <- DGEList(counts=a)
 isexpr <- rowSums(cpm(x) > 6) >= 3
 x <- x[isexpr, ]
 dim (x$counts)
-#  12022    12
+#  11846     9
 
 
 ## paired limma test (the paired factor is treated as a batch factor)
