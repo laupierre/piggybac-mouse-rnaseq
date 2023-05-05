@@ -76,7 +76,7 @@ batch
 design <- model.matrix (~ 0 + celltype + batch) 
 colnames (design) <- gsub ("celltype", "", colnames (design))
 
-contr.matrix <- makeContrasts (shpgbvsctrl = shPGBD5-CONTROL, shpgbdvsshctrl = shPGBD5-shCONTROL, levels = colnames(design))
+contr.matrix <- makeContrasts (shpgbvsctrl = shPGBD5-CONTROL, shpgbdvsshctrl = shPGBD5-shCONTROL, shctrlvsctrl= shCONTROL-CONTROL, levels = colnames(design))
 
 v <- voomWithQualityWeights(x, design=design, plot=TRUE)
 vfit <- lmFit(v, design)
@@ -85,14 +85,20 @@ efit <- eBayes(vfit, trend=TRUE)
 
 res1 <- topTable(efit,coef=1,sort.by="P", n= Inf)
 res2 <- topTable(efit,coef=2,sort.by="P", n= Inf)
+res3 <- topTable(efit,coef=3,sort.by="P", n= Inf)
 
 res1[row.names (res1) == anno[anno$gene_name == "Pgbd5", ]$gene_id, ]
-#                          logFC  AveExpr         t      P.Value  adj.P.Val
-#ENSMUSG00000050751.16 -1.181046 6.163766 -4.949085 0.0007322531 0.01160692
+#                          logFC  AveExpr         t     P.Value  adj.P.Val
+#ENSMUSG00000050751.16 -1.083588 6.137508 -4.583597 0.001938012 0.01283987
 
 res2[row.names (res2) == anno[anno$gene_name == "Pgbd5", ]$gene_id, ]
 #                          logFC  AveExpr         t      P.Value  adj.P.Val
-#ENSMUSG00000050751.16 -1.580888 6.163766 -7.013265 5.456355e-05 0.02951769
+#ENSMUSG00000050751.16 -1.380691 6.137508 -6.267808 0.0002729083 0.01961983
+
+res3[row.names (res3) == anno[anno$gene_name == "Pgbd5", ]$gene_id, ]
+#                          logFC  AveExpr        t   P.Value adj.P.Val        B
+#ENSMUSG00000050751.16 0.2971032 6.137508 1.461883 0.1830328 0.5418396 -5.75393
+
 
 boxplot (res1$logFC)
 abline (h=0)
@@ -104,10 +110,19 @@ abline (h=0)
 abline (h=1)
 abline (h=-1)
 
+boxplot (res3$logFC)
+abline (h=0)
+abline (h=1)
+abline (h=-1)
+
 
 colnames (res1) <- paste (colnames (res1), "shpgbvsctrl", sep=".")
 colnames (res2) <- paste (colnames (res2), "shpgbvsshctrl", sep=".")
+colnames (res3) <- paste (colnames (res3), "shctrolvsctrl", sep=".")
+
 resall <- merge (res1, res2, by="row.names")
+colnames (resall)[1] <- "gene_id"
+resall <- merge (resall, res3, by.x="gene_id", by.y="row.names")
 colnames (resall)[1] <- "gene_id"
 res <- merge (resall, anno, by="gene_id")
 
@@ -134,18 +149,18 @@ norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x > 0) )] <- "
 norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x < 0) )] <- "Down"
 table (norm.dif$consistent)
 #Down   No   Up 
-#3964 5267 2791 
+#3587 6108 2151
 
 res <- merge (res, norm.dif, by.x="gene_id", by.y="row.names")
-res <- res[ ,c(1:17, 19:22, 18)]
+res <- res[ ,c(1:23, 25:28, 24)]
 res <- res[order (res$adj.P.Val.shpgbvsctrl), ]
 
 table (res$adj.P.Val.shpgbvsctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
-# 9140  2882  
+# 9733  2113  
 table (res$adj.P.Val.shpgbvsshctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
-#11939    83  
+#10954   892 
 
 res[res$gene_name == "Pgbd5", ]
 
