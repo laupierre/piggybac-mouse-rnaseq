@@ -134,11 +134,11 @@ norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x > 0) )] <- "
 norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x < 0) )] <- "Down"
 table (norm.dif$consistent)
 #Down   No   Up 
-#3625 6231 2166 
+#3964 5267 2791 
 
 res <- merge (res, norm.dif, by.x="gene_id", by.y="row.names")
 res <- res[ ,c(1:17, 19:22, 18)]
-res <- res[order (res$adj.P.Val), ]
+res <- res[order (res$adj.P.Val.shpgbvsctrl), ]
 
 table (res$adj.P.Val.shpgbvsctrl < 0.05)
 #FALSE  TRUE 
