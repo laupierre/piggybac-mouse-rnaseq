@@ -43,7 +43,7 @@ pheno$genotype [pheno$genotype == "PGBD5"] <- "shPGBD5"
 ## remove a pair of samples
 
 # remove all samples from batch 6
-pheno <- pheno[grep ("_6_", pheno$sample, invert=TRUE), ]
+pheno <- pheno[grep ("_6", pheno$sample, invert=TRUE), ]
 # remove an additional sample: MsCTX_PGBD5_sh8_7_S23
 pheno <- pheno[grep ("PGBD5_sh8_7", pheno$sample, invert=TRUE), ]
 pheno
