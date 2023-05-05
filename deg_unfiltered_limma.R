@@ -118,13 +118,13 @@ res[res$gene_name == "Pgbd5", ]
 ## Pairwise comparisons of batches 4 and 8 (these are the 2 working experiments) !!!
 ## Not sure why they are not against the CONTROL originally !!!
 norm.exprs <- v$E
-#norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"shCONTROL_4"])
-#norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"shCONTROL_8"])
-#norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"shCONTROL_8"])
+norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"shCONTROL_4"])
+norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"shCONTROL_8"])
+norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"shCONTROL_8"])
 
-norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"CONTROL_4"])
-norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"CONTROL_8"])
-norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"CONTROL_8"])
+#norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"CONTROL_4"])
+#norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"CONTROL_8"])
+#norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"CONTROL_8"])
 
 norm.dif <- cbind (norm.dif1, norm.dif2, norm.dif3)
 
