@@ -140,12 +140,12 @@ res <- merge (res, norm.dif, by.x="gene_id", by.y="row.names")
 res <- res[ ,c(1:17, 19:22, 18)]
 res <- res[order (res$adj.P.Val.shpgbvsctrl), ]
 
-table (res$adj.P.Val.shpgbvsctrl < 0.05)
+table (res$adj.P.Val.shpgbvsctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
-# 8749  3273 
-table (res$adj.P.Val.shpgbvsshctrl < 0.05)
+# 9140  2882  
+table (res$adj.P.Val.shpgbvsshctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
-#11937    85 
+#11939    83  
 
 write.xlsx (res, "deg_unfiltered_piggybac_mouse_shRNA_limma_new_pipeline.xlsx", rowNames=F)
 
