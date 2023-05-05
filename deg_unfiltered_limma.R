@@ -147,6 +147,8 @@ table (res$adj.P.Val.shpgbvsshctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
 #11939    83  
 
+res[res$gene_name == "Pgbd5", ]
+
 write.xlsx (res, "deg_unfiltered_piggybac_mouse_shRNA_limma_new_pipeline.xlsx", rowNames=F)
 
 
