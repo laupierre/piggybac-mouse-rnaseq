@@ -1,1 +1,98 @@
+library (edgeR)
+library (limma)
+library (openxlsx)
+
+# /Volumes/texas/iit_projects/devide/devid paper/mouse_shrna
+# this is the collapse matrix from WGCNA (in the old pipeline)
+counts <-  read.delim ("subread.mouse.collapsed.counts.txt", row.names=1)
+
+# remove all samples from batch 6
+counts <- counts[ , grep ("_6_", colnames (counts), invert=TRUE)]
+# remove an additional sample: MsCTX_PGBD5_sh8_7_S23
+counts <- counts[ , grep ("MsCTX_PGBD5_sh8_7_S23", colnames (counts), invert=TRUE)]
+
+
+x <- DGEList(counts=counts) 
+
+# filter for cpm > 5 in at least 3 samples
+isexpr <- rowSums(cpm(x) > 5) >= 3
+x <- x[isexpr,]
+dim (x$counts)
+# 12467     9
+
+
+celltype <- gsub ("_.*", "", gsub ("MsCTX_", "", colnames (x$counts)) )
+celltype[4:6] <- "shPGBD5"
+celltype <- factor (celltype)
+batch <- factor (gsub (".*_", "", gsub ("_S.*", "", colnames (x$counts)) ))
+batch <- factor (as.numeric (gsub ("\\..*", "", batch)))
+# 4 7 8 4 8 8 4 7 8
+
+design <- model.matrix (~ 0 + celltype + batch) 
+colnames (design) <- gsub ("celltype", "", colnames (design))
+
+contr.matrix <- makeContrasts (shpgbvsctrl = shPGBD5-CONTROL, shpgbdvsshctrl = shPGBD5-shCONTROL, shctrlvsctrl= shCONTROL-CONTROL, levels = colnames(design))
+
+v <- voomWithQualityWeights(x, design=design, plot=TRUE)
+vfit <- lmFit(v, design)
+vfit <- contrasts.fit(vfit, contrasts=contr.matrix)
+efit <- eBayes(vfit, trend=TRUE)
+
+res1 <- topTable(efit,coef=1,sort.by="P", n= Inf)
+res2 <- topTable(efit,coef=2,sort.by="P", n= Inf)
+res3 <- topTable(efit,coef=3,sort.by="P", n= Inf)
+
+res1[row.names (res1) == "Pgbd5", ]
+#          logFC  AveExpr        t    P.Value  adj.P.Val         B
+#Pgbd5 -1.099082 6.084424 -4.47986 0.00194124 0.01487488 -1.701763
+res2[row.names (res2) == "Pgbd5", ]
+#         logFC  AveExpr         t      P.Value  adj.P.Val         B
+#Pgbd5 -1.37903 6.084424 -6.024399 0.0002872609 0.02814929 0.7384491
+res3[row.names (res3) == "Pgbd5", ]
+#          logFC  AveExpr        t   P.Value adj.P.Val         B
+#Pgbd5 0.2799474 6.084424 1.339829 0.2162992 0.6169303 -5.954063
+
+
+colnames (res1) <- paste (colnames (res1), "shpgbvsctrl", sep=".")
+colnames (res2) <- paste (colnames (res2), "shpgbvsshctrl", sep=".")
+colnames (res3) <- paste (colnames (res3), "shctrolvsctrl", sep=".")
+
+resall <- merge (res1, res2, by="row.names")
+colnames (resall)[1] <- "gene_id"
+resall <- merge (resall, res3, by.x="gene_id", by.y="row.names")
+colnames (resall)[1] <- "gene_id"
+
+resall[resall$gene_id == "Pgbd5", ]
+
+
+## see individual paired log2 fold changes. These are not normalized values
+## Pairwise comparisons of batches 4 and 8 (these are the 2 working experiments) !!!
+## Not sure why they are not against the CONTROL originally !!!
+norm.exprs <- v$E
+colnames (norm.exprs) <- gsub ("MsCTX_", "", colnames (norm.exprs))
+colnames (norm.exprs) <- gsub ("_S.*", "", colnames (norm.exprs))
+
+norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"shCONTROL_4"])
+norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"shCONTROL_8"])
+norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"shCONTROL_8"])
+
+#norm.dif1 <- data.frame (D04= norm.exprs[ ,"PGBD5_sh8_4"] -  norm.exprs[ ,"CONTROL_4"])
+#norm.dif2 <- data.frame (D081= norm.exprs[ ,"PGBD5_sh8_8.1"] -  norm.exprs[ ,"CONTROL_8"])
+#norm.dif3 <- data.frame (D082= norm.exprs[ ,"PGBD5_sh8_8.2"] -  norm.exprs[ ,"CONTROL_8"])
+
+norm.dif <- cbind (norm.dif1, norm.dif2, norm.dif3)
+
+
+norm.dif$consistent <- "No"
+norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x > 0) )] <- "Up"
+norm.dif$consistent [apply (norm.dif[ ,1:3], 1, function (x) all (x < 0) )] <- "Down"
+table (norm.dif$consistent)
+#Down   No   Up 
+#3729 6514 2224 
+
+
+
+
+
+
 
