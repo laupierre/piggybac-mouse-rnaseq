@@ -7,9 +7,13 @@ sh$gene_name.sh.mouse <- toupper (sh$gene_name.sh.mouse)
 head (sh)
 
 oe <- read.xlsx ("/Volumes/king/piggybac/human2020/deg_unfiltered_piggybac_overexpression_limma_new_pipeline.xlsx")
+anno <- oe[ ,c("gene_name", "gene_type", "description")]
+anno$description <- gsub ("\\ \\[.*", "", anno$description)
+
 oe <- oe[ ,c("gene_name", "logFC", "adj.P.Val")]
 colnames (oe) <- paste (colnames (oe), "oe.human", sep=".")
 head (oe)
+
 
 comp <- merge (sh, oe, by.x="gene_name.sh.mouse", by.y="gene_name.oe.human")
 comp$significance1 <- "No"
@@ -28,6 +32,12 @@ comp$trend.overall[comp$trend.mouse == "Up" & comp$logFC.oe.human < 0 & comp$sig
 table (comp$trend.overall)
 #  No  RC1  RC2 
 #8541  337   85 
+
+
+comp <- comp[ ,!colnames (comp) %in% c("significance1", "significance2", "significance.overall", "trend.mouse")]
+colnames (comp) [1] <- "gene_name" 
+comp <- merge (comp, anno, by= "gene_name")
+write.xlsx (comp, "comparison_human_oe_and_mouse_shrna_piggybac.xlsx", rowNames=F)
 
 comp.s <- comp[comp$trend.overall != "No", ]
 write.xlsx (comp.s, "trend.xlsx", rowNames=F)
