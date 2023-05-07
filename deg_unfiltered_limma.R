@@ -163,11 +163,37 @@ table (res$adj.P.Val.shpgbvsctrl < 0.05 & res$consistent != "No")
 table (res$adj.P.Val.shpgbvsshctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
 #10954   892 
+table (res$adj.P.Val.shctrolvsctrl < 0.05)
+#FALSE  TRUE 
+#11683   163
 
-res[res$gene_name == "Pgbd5", ]
+#res[res$gene_name == "Pgbd5", ]
 
 write.xlsx (res, "deg_unfiltered_piggybac_mouse_shRNA_limma_new_pipeline.xlsx", rowNames=F)
 
+
+
+## Sanity check (with the old WGCNA collapsed pipeline)
+
+prev <- read.xlsx ("/Volumes/texas/iit_projects/devide/devid paper/mouse_shrna/deg_unfiltered_piggybac_mouse_shRNA_limma_old_pipeline.xlsx")
+prev <- merge (res, prev, by.x="gene_name", by.y="gene_id")
+
+plot (prev$logFC.shpgbvsctrl.x, prev$logFC.shpgbvsctrl.y, xlab="new_pipe_limma", ylab="prev_pipe_limma")
+abline (h=0)
+abline (v=0)
+cor (prev$logFC.shpgbvsctrl.x, prev$logFC.shpgbvsctrl.y, method="pearson")
+# 0.99
+
+plot (prev$logFC.shpgbvsshctrl.x, prev$logFC.shpgbvsshctrl.y, xlab="new_pipe_limma", ylab="prev_pipe_limma")
+abline (h=0)
+abline (v=0)
+cor (prev$logFC.shpgbvsshctrl.x, prev$logFC.shpgbvsshctrl.y, method="pearson")
+# 0.99
+
+plot (prev$logFC.shctrolvsctrl.x, prev$logFC.shctrolvsctrl.y, xlab="new_pipe_limma", ylab="prev_pipe_limma")
+abline (h=0)
+abline (v=0)
+cor (prev$logFC.shctrolvsctrl.x, prev$logFC.shctrolvsctrl.y, method="pearson")
 
 
 
