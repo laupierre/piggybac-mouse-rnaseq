@@ -11,7 +11,6 @@ counts <- counts[ , grep ("_6_", colnames (counts), invert=TRUE)]
 # remove an additional sample: MsCTX_PGBD5_sh8_7_S23
 counts <- counts[ , grep ("MsCTX_PGBD5_sh8_7_S23", colnames (counts), invert=TRUE)]
 
-
 x <- DGEList(counts=counts) 
 
 # filter for cpm > 5 in at least 3 samples
@@ -26,6 +25,7 @@ celltype[4:6] <- "shPGBD5"
 celltype <- factor (celltype)
 batch <- factor (gsub (".*_", "", gsub ("_S.*", "", colnames (x$counts)) ))
 batch <- factor (as.numeric (gsub ("\\..*", "", batch)))
+batch
 # 4 7 8 4 8 8 4 7 8
 
 design <- model.matrix (~ 0 + celltype + batch) 
