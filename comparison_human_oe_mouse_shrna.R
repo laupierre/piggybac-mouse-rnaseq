@@ -37,10 +37,10 @@ table (comp$trend.overall)
 comp <- comp[ ,!colnames (comp) %in% c("significance1", "significance2", "significance.overall", "trend.mouse")]
 colnames (comp) [1] <- "gene_name" 
 comp <- merge (comp, anno, by= "gene_name")
-write.xlsx (comp, "comparison_human_oe_and_mouse_shrna_piggybac.xlsx", rowNames=F)
+write.xlsx (comp, "deg_comparison_human_oe_and_mouse_shrna_piggybac.xlsx", rowNames=F)
 
 comp.s <- comp[comp$trend.overall != "No", ]
-write.xlsx (comp.s, "trend.xlsx", rowNames=F)
+write.xlsx (comp.s, "deg_filtered_comparison_human_oe_and_mouse_shrna_piggybac.xlsx", rowNames=F)
 
 
 
