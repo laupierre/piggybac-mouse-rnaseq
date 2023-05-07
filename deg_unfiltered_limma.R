@@ -155,6 +155,8 @@ res <- merge (res, norm.dif, by.x="gene_id", by.y="row.names")
 res <- res[ ,c(1:23, 25:28, 24)]
 res <- res[order (res$adj.P.Val.shpgbvsctrl), ]
 
+
+## There are more genes in shPGBD5 vs CTRL (than vs shCTRL)
 table (res$adj.P.Val.shpgbvsctrl < 0.05 & res$consistent != "No")
 #FALSE  TRUE 
 # 9733  2113  
