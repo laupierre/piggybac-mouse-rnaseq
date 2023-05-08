@@ -40,7 +40,6 @@ colnames (pheno) <- c("sample", "genotype")
 row.names (pheno) <- pheno$sample <- colnames (a)
 pheno$genotype <- gsub ("_.*", "", pheno$sample)
 pheno$genotype [pheno$genotype == "PGBD5"] <- "shPGBD5" 
-## remove a pair of samples
 
 # remove all samples from batch 6
 pheno <- pheno[grep ("_6", pheno$sample, invert=TRUE), ]
@@ -170,6 +169,37 @@ table (res$adj.P.Val.shctrolvsctrl < 0.05)
 #res[res$gene_name == "Pgbd5", ]
 
 write.xlsx (res, "deg_unfiltered_piggybac_mouse_shRNA_limma_new_pipeline.xlsx", rowNames=F)
+
+
+
+## Comparison of contrasts
+par (mfrow=c(2,1))
+res.s <- res[res$adj.P.Val.shpgbvsctrl < 0.05, ]
+
+plot (res.s$logFC.shpgbvsctrl, res.s$logFC.shpgbvsshctrl, xlab="shPGBD5 vs CTRL", ylab="shPGBD5 vs shCTRL", main="significant shPGBD5 vs CTRL genes", xlim=c(-5,5), ylim=c(-5,5))
+abline (h=0)
+abline (v=0)
+abline (0,1, col="red")
+
+plot (res.s$logFC.shpgbvsctrl, res.s$logFC.shctrolvsctrl, xlab="shPGBD5 vs CTRL", ylab="shCTRL vs CTRL", main="significant shPGBD5 vs CTRL genes", xlim=c(-5,5), ylim=c(-5,5))
+abline (h=0)
+abline (v=0)
+abline (0,1, col="red")
+
+
+par (mfrow=c(2,1))
+res.s <- res[res$adj.P.Val.shpgbvsshctrl < 0.05, ]
+
+plot (res.s$logFC.shpgbvsctrl, res.s$logFC.shpgbvsshctrl, xlab="shPGBD5 vs CTRL", ylab="shPGBD5 vs shCTRL", main="significant shPGBD5 vs shCTRL genes", xlim=c(-5,5), ylim=c(-5,5))
+abline (h=0)
+abline (v=0)
+abline (0,1, col="red")
+
+plot (res.s$logFC.shpgbvsctrl, res.s$logFC.shctrolvsctrl, xlab="shPGBD5 vs CTRL", ylab="shCTRL vs CTRL", main="significant shPGBD5 vs shCTRL genes", xlim=c(-5,5), ylim=c(-5,5))
+abline (h=0)
+abline (v=0)
+abline (0,1, col="red")
+
 
 
 
